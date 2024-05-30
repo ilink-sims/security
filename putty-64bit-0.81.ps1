@@ -1,0 +1,1 @@
+$Path = $env:TEMP; $Installer = "putty-64bit-0.81-installer.msi"; Invoke-WebRequest "https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.81-installer.msi" -OutFile $Path$Installer; Start-Process -FilePath $Path$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path$Installer
