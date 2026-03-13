@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: RemoveDirectoryRoleMember
+  description: Remove a user from an Azure AD directory role by template ID and member object ID.
+  version: 1.0.0
+servers:
+  - url: https://graph.microsoft.com/v1.0
+    description: Microsoft Graph API
+paths:
+  /directoryRoles(roleTemplateId='{roleTemplateId}')/members/{id}/$ref:
+    delete:
+      summary: Remove directory role member
+      description: Removes a user from an Azure AD directory role (e.g., Global Administrator) using roleTemplateId and user/object id as input.
+      operationId: RemoveDirectoryRoleMember
+      parameters:
+        - name: roleTemplateId
+          in: path
+          required: true
+          description: The directory role template ID (e.g., for Global Admin)
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: The objectId of the member (user or directory object) to remove
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Directory role membership successfully removed
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized - invalid/missing authentication
+        '403':
+          description: Forbidden - permission issues
+        '404':
+          description: Directory role/member not found
+      security:
+        - oauth2: []
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/{tenantid}/oauth2/v2.0/token
+          scopes:
+            https://graph.microsoft.com/.default:
+              description: Access Microsoft Graph
