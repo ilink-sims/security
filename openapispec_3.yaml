@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: RemoveApplicationPassword
+  description: Removes a password credential from an Azure AD application using its keyId
+  version: 1.0.0
+servers:
+  - url: https://graph.microsoft.com/v1.0
+    description: Microsoft Graph API
+paths:
+  /applications/{applicationObjectId}/removePassword:
+    post:
+      summary: Remove a password credential from an application
+      description: Removes a password credential specified by keyId from an application object
+      operationId: RemoveApplicationPassword
+      parameters:
+        - name: applicationObjectId
+          in: path
+          required: true
+          description: The object ID of the application (not the clientId/appId)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - keyId
+              properties:
+                keyId:
+                  type: string
+                  format: uuid
+                  description: The unique identifier (GUID) of the password credential to remove
+      responses:
+        '204':
+          description: Password credential successfully removed
+        '400':
+          description: Bad request - invalid keyId format
+        '401':
+          description: Unauthorized - invalid or missing authentication
+        '404':
+          description: Application or password credential not found
+      security:
+        - oauth2: []
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/{tenantid}/oauth2/v2.0/token
+          scopes:
+            https://graph.microsoft.com/.default:
+              description: Access Microsoft Graph
