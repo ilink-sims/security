@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  title: GetKeyId
+  description: Retrieves password credential keyIds from an Azure AD application
+  version: 1.0.0
+servers:
+  - url: https://graph.microsoft.com/v1.0
+    description: Microsoft Graph API
+paths:
+  /applications/{applicationObjectId}:
+    get:
+      summary: Get password credentials keyIds
+      description: Retrieves the passwordCredentials and keyCredentials arrays containing keyId values for a given application object
+      operationId: GetKeyId
+      parameters:
+        - name: applicationObjectId
+          in: path
+          required: true
+          description: The object ID of the application (not the clientId/appId)
+          schema:
+            type: string
+        - name: $select
+          in: query
+          required: false
+          description: Select specific properties to return
+          schema:
+            type: string
+            default: passwordCredentials,keyCredentials
+      responses:
+        '200':
+          description: Successfully retrieved application credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  passwordCredentials:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        keyId:
+                          type: string
+                          format: uuid
+                        displayName:
+                          type: string
+                        endDateTime:
+                          type: string
+                          format: date-time
+                  keyCredentials:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        keyId:
+                          type: string
+                          format: uuid
+                        displayName:
+                          type: string
+                        endDateTime:
+                          type: string
+                          format: date-time
+        '401':
+          description: Unauthorized - invalid or missing authentication
+        '404':
+          description: Application not found
+      security:
+        - oauth2: []
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/{tenantid}/oauth2/v2.0/token
+          scopes:
+            https://graph.microsoft.com/.default:
